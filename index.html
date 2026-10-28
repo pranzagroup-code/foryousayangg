@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0B0B0D">
+<title>Project Dhiny</title>
+<style>:root{--bg:#0B0B0D;--panel:#171719;--text:#F5F5F3;--muted:#B7B7BA;--border:#38383C;
+--serif:Georgia,"Iowan Old Style","Palatino Linotype",serif;--sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+*{box-sizing:border-box}
+html,body{margin:0;overflow-x:hidden}
+body{background:var(--bg);color:var(--text);font:1.0625rem/1.7 var(--sans);min-height:100vh;-webkit-tap-highlight-color:transparent}
+.glow{position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse 70% 45% at 50% 0%,rgba(245,245,243,.09),transparent 70%),radial-gradient(ellipse 60% 40% at 50% 100%,rgba(245,245,243,.05),transparent 70%)}
+main{position:relative;max-width:640px;margin:0 auto;padding:4.5rem 1.25rem 3rem}
+.page{display:flex;flex-direction:column;align-items:center;text-align:center;gap:1.4rem;min-height:calc(100vh - 7.5rem);justify-content:center;animation:fade .9s ease both}
+.page[hidden]{display:none}
+.title{font:400 clamp(1.6rem,6vw,2.3rem)/1.3 var(--serif);margin:0;letter-spacing:.01em}
+.sub,.hint{color:var(--muted);margin:0;font-size:1rem}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+h1:focus{outline:none}
+.btn{min-height:48px;padding:.75rem 1.6rem;border-radius:999px;border:1px solid var(--text);background:var(--text);color:var(--bg);font:600 1rem var(--sans);cursor:pointer;transition:transform .25s,box-shadow .25s,background .25s}
+.btn:hover{box-shadow:0 0 28px rgba(245,245,243,.25);transform:translateY(-1px)}
+.btn.ghost{background:transparent;color:var(--text);border-color:var(--border)}
+.btn.ghost:hover{border-color:var(--muted)}
+button:focus-visible{outline:3px solid var(--text);outline-offset:3px}
+.nav{display:flex;gap:.8rem;flex-wrap:wrap;justify-content:center;margin-top:.6rem}
+.nav.col{flex-direction:column;align-items:stretch;width:min(100%,320px)}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:1.6rem 1.4rem;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.letter{text-align:left;font:1.1rem/1.85 var(--serif);width:100%}
+.letter p{margin:0 0 1.1rem}.letter p:last-child{margin:0}.letter p:first-child{font-size:1.25rem}
+.sign{margin:0;color:var(--muted);font-family:var(--serif)}
+.chat{font:1.15rem/1.8 var(--serif);text-align:left}.chat p{margin:0}
+.rise{animation:rise 1.4s ease both}
+.music-wrap{position:fixed;top:.8rem;right:.8rem;z-index:10;display:flex;flex-direction:column;align-items:flex-end;gap:.3rem;max-width:calc(100vw - 1.6rem)}
+.music-wrap[hidden]{display:none}
+.music{min-height:44px;padding:.4rem 1rem;border-radius:999px;border:1px solid var(--border);background:rgba(23,23,25,.85);color:var(--text);font:.95rem var(--sans);cursor:pointer}
+.music[aria-pressed=true]{border-color:var(--text)}
+.music-status{margin:0;font-size:.85rem;color:var(--muted);background:var(--panel);padding:.3rem .7rem;border-radius:10px}
+.music-status:empty{display:none}
+.envelope{position:relative;width:min(84vw,320px);height:min(55vw,212px);margin:2.6rem 0 .6rem;padding:0;border:0;background:none;cursor:pointer;perspective:900px;filter:drop-shadow(0 24px 40px rgba(0,0,0,.7))}
+.envelope>*{position:absolute;display:block}
+.env-back{inset:0;background:#202023;border:1px solid var(--border);border-radius:8px}
+.env-paper{left:8%;right:8%;top:8%;height:82%;background:#ECECE8;border-radius:4px;z-index:2;padding:1.2rem 1rem;transition:transform 1s cubic-bezier(.2,.8,.2,1) .35s}
+.env-paper i{display:block;height:3px;background:#c9c9c4;margin-bottom:.75rem;border-radius:2px}.env-paper i.short{width:55%}
+.env-front{inset:0;z-index:3;border-radius:8px;background:linear-gradient(160deg,#2b2b2f,#1a1a1d);clip-path:polygon(0 100%,0 22%,50% 62%,100% 22%,100% 100%)}
+.env-flap{left:0;right:0;top:0;height:64%;z-index:4;background:linear-gradient(#34343a,#26262a);clip-path:polygon(0 0,100% 0,50% 100%);transform-origin:top;transition:transform .8s ease,z-index 0s .4s}
+.seal{left:50%;top:55%;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;z-index:5;background:radial-gradient(circle at 35% 30%,#fff,#bdbdb8);box-shadow:0 0 18px rgba(245,245,243,.4);transition:opacity .4s}
+.seal::after{content:"";position:absolute;inset:9px;border:1.5px solid #6a6a66;border-radius:50%}
+.envelope.open .env-flap{transform:rotateX(180deg);z-index:1}
+.envelope.open .env-paper{transform:translateY(-42%)}
+.envelope.open .seal{opacity:0}
+.envelope:not(.open){animation:float 4s ease-in-out infinite}
+.frame{margin:0;width:100%}
+.photo-box{position:relative;aspect-ratio:4/5;max-height:62vh;margin:0 auto;border:1px solid var(--border);padding:10px;background:var(--panel);box-shadow:0 0 80px rgba(245,245,243,.1),0 30px 60px rgba(0,0,0,.6);border-radius:6px;overflow:hidden}
+.photo-box img,.photo-fallback{width:100%;height:100%;border-radius:3px}
+.photo-box img{object-fit:cover;filter:contrast(1.05) saturate(.9);opacity:0;transition:opacity 1.6s ease}
+.photo-box img.loaded{opacity:1}
+.photo-fallback{display:flex;align-items:center;justify-content:center;color:var(--muted);background:radial-gradient(circle at 50% 35%,#2c2c30,#121214 70%)}
+.photo-fallback[hidden],.photo-box img[hidden]{display:none}
+.caption{margin-top:1.2rem;font:italic 1.2rem/1.6 var(--serif);color:var(--text)}
+.cards{display:grid;grid-template-columns:1fr;gap:.9rem;width:100%}
+.flip{min-height:84px;border-radius:14px;border:1px solid var(--border);background:var(--panel);color:var(--text);font:1.05rem/1.6 var(--serif);padding:1rem 1.2rem;cursor:pointer;transition:border-color .4s,background .4s,box-shadow .4s}
+.flip:hover{border-color:var(--muted)}
+.flip .back{display:none}
+.flip.open{background:#1f1f22;border-color:var(--text);box-shadow:0 0 30px rgba(245,245,243,.12);animation:fade .7s ease}
+.flip.open .front{display:none}.flip.open .back{display:block}
+.flip .front{color:var(--muted)}
+[hidden]{display:none!important}
+.gift{position:relative;width:200px;height:190px;margin:1.5rem auto .5rem;border:0;background:none;cursor:pointer;animation:float 4s ease-in-out infinite}
+.gift>*{position:absolute;left:0;right:0;display:block}
+.g-body{bottom:0;height:125px;background:linear-gradient(#18181a,#0e0e10);border:1px solid var(--border);border-radius:0 0 8px 8px;box-shadow:0 24px 50px rgba(0,0,0,.7)}
+.g-lid{top:0;left:-8px;right:-8px;height:66px;background:linear-gradient(#202023,#141416);border:1px solid #4a4a4f;border-radius:8px;transition:transform .9s cubic-bezier(.3,.7,.3,1),opacity .9s}
+.g-rv{position:absolute;left:50%;top:0;bottom:0;width:26px;margin-left:-13px;background:#f1f1ee}
+.bow{position:absolute;top:-30px;width:44px;height:34px;border:7px solid #f1f1ee;border-radius:50% 50% 50% 0;background:none}
+.bow.l{left:50%;margin-left:-46px;transform:rotate(-12deg)}.bow.r{left:50%;margin-left:2px;transform:scaleX(-1) rotate(-12deg)}
+.knot{position:absolute;left:50%;top:-8px;width:20px;height:18px;margin-left:-10px;border-radius:5px;background:#fff}
+.gift.open{animation:none}
+.gift.open .g-lid{transform:translateY(-90px) rotate(-16deg);opacity:0}
+.gift.open .g-body{animation:fadeout .9s .5s forwards}
+.bouquet{width:100%;animation:rise 1.6s ease both}
+.bouquet svg{width:min(78vw,300px);height:auto;filter:drop-shadow(0 0 40px rgba(245,245,243,.18)) drop-shadow(0 24px 30px rgba(0,0,0,.6))}
+.tag{margin:.4rem auto 0;max-width:420px;background:#ECECE8;color:#17171a;border-radius:6px;padding:1.2rem 1.3rem;box-shadow:0 18px 40px rgba(0,0,0,.6)}
+.tag strong{display:block;font:italic 1.5rem var(--serif);margin-bottom:.4rem}.tag p{margin:0;font:1.02rem/1.7 var(--serif)}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes float{50%{transform:translateY(-6px)}}
+@keyframes fadeout{to{opacity:0;transform:translateY(20px)}}
+@media(min-width:640px){.cards{grid-template-columns:repeat(3,1fr)}.flip{min-height:140px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;transition-delay:0s!important}}
+</style>
+</head>
+<body>
+<div class="glow" aria-hidden="true"></div>
+<div class="music-wrap" id="musicWrap">
+  <button id="musicBtn" class="music" type="button" aria-pressed="false" aria-label="Putar musik latar">♪ <span id="musicLabel">Musik mati</span></button>
+  <p id="musicStatus" class="music-status" role="status" aria-live="polite"></p>
+</div>
+<noscript><p class="noscript">Website ini membutuhkan JavaScript supaya bisa dibuka.</p></noscript>
+
+<main>
+<!-- A: AMPLOP -->
+<section class="page" data-page="A" aria-labelledby="tA">
+  <h1 id="tA" class="title rise" data-cfg="opening"></h1>
+  <button id="envelope" class="envelope" type="button" aria-expanded="false" aria-label="Amplop surat. Ketuk untuk membuka">
+    <span class="env-back"></span>
+    <span class="env-paper"><i></i><i></i><i></i><i class="short"></i></span>
+    <span class="env-front"></span>
+    <span class="env-flap"></span>
+    <span class="seal"></span>
+  </button>
+  <p id="envHint" class="hint">Ketuk amplop untuk membuka</p>
+  <button id="readBtn" class="btn" type="button" data-go="B" hidden>Baca suratku</button>
+</section>
+
+<!-- B: SURAT -->
+<section class="page" data-page="B" aria-labelledby="tB" hidden>
+  <h1 id="tB" class="title">Surat untuk <span data-cfg="recipient"></span></h1>
+  <article class="card letter" id="letterBody"></article>
+  <p class="sign">— <span data-cfg="sender"></span></p>
+  <div class="nav"><button class="btn ghost" type="button" data-go="A">Kembali</button><button class="btn" type="button" data-go="C">Lanjut</button></div>
+</section>
+
+<!-- C: FOTO -->
+<section class="page" data-page="C" aria-labelledby="tC" hidden>
+  <h1 id="tC" class="sr-only">Foto</h1>
+  <figure class="frame">
+    <div class="photo-box">
+      <img id="photo" alt="" hidden>
+      <div id="photoFallback" class="photo-fallback" role="img" aria-label="Tempat foto"><span id="photoFallbackText"></span></div>
+    </div>
+    <figcaption id="photoCaption" class="caption"></figcaption>
+  </figure>
+  <div class="nav"><button class="btn ghost" type="button" data-go="B">Kembali</button><button class="btn" type="button" data-go="D">Lanjut</button></div>
+</section>
+
+<!-- D: MINI GAME -->
+<section class="page" data-page="D" aria-labelledby="tD" hidden>
+  <h1 id="tD" class="title" data-cfg="game.title"></h1>
+  <p class="sub" data-cfg="game.intro"></p>
+  <div class="cards" id="cards"></div>
+  <p id="gameStatus" class="hint" role="status" aria-live="polite">0 dari 3 kartu terbuka</p>
+  <button id="surpriseBtn" class="btn" type="button" data-go="E" hidden>Ada satu kejutan lagi</button>
+  <div class="nav"><button class="btn ghost" type="button" data-go="C">Kembali</button></div>
+</section>
+
+<!-- E: HADIAH -->
+<section class="page" data-page="E" aria-labelledby="tE" hidden>
+  <h1 id="tE" class="title">Hadiah untuk <span data-cfg="recipient"></span></h1>
+  <div id="giftStage">
+    <button id="giftBox" class="gift" type="button" aria-label="Kotak hadiah. Ketuk untuk membuka hadiah">
+      <span class="g-body"><i class="g-rv"></i></span>
+      <span class="g-lid"><i class="g-rv"></i><i class="bow l"></i><i class="bow r"></i><i class="knot"></i></span>
+    </button>
+    <p id="giftHint" class="hint">Ketuk untuk membuka hadiah</p>
+  </div>
+  <div id="bouquet" class="bouquet" hidden>
+    <svg viewBox="0 0 300 350" role="img" aria-label="Karangan bunga putih dan krem dengan daun dan pita">
+      <defs>
+        <radialGradient id="petal" cx="50%" cy="40%" r="70%"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="currentColor"/></radialGradient>
+        <g id="bloom">
+          <g fill="url(#petal)" stroke="#0B0B0D" stroke-opacity=".18" stroke-width=".8">
+            <ellipse cy="-17" rx="10" ry="18" transform="rotate(0)"/><ellipse cy="-17" rx="10" ry="18" transform="rotate(45)"/>
+            <ellipse cy="-17" rx="10" ry="18" transform="rotate(90)"/><ellipse cy="-17" rx="10" ry="18" transform="rotate(135)"/>
+            <ellipse cy="-17" rx="10" ry="18" transform="rotate(180)"/><ellipse cy="-17" rx="10" ry="18" transform="rotate(225)"/>
+            <ellipse cy="-17" rx="10" ry="18" transform="rotate(270)"/><ellipse cy="-17" rx="10" ry="18" transform="rotate(315)"/>
+            <ellipse cy="-9" rx="7" ry="12" transform="rotate(22)"/><ellipse cy="-9" rx="7" ry="12" transform="rotate(82)"/>
+            <ellipse cy="-9" rx="7" ry="12" transform="rotate(142)"/><ellipse cy="-9" rx="7" ry="12" transform="rotate(202)"/>
+            <ellipse cy="-9" rx="7" ry="12" transform="rotate(262)"/><ellipse cy="-9" rx="7" ry="12" transform="rotate(322)"/>
+          </g>
+          <circle r="5" fill="#d8c9a4"/><circle r="2" fill="#b9a67a"/>
+        </g>
+        <path id="leaf" d="M0 0C18-22 52-22 74 0C52 22 18 22 0 0Z"/>
+      </defs>
+      <polygon points="40,165 260,165 170,335 130,335" fill="#2e2e32"/>
+      <g stroke="#7d8a7c" stroke-width="3" fill="none" stroke-linecap="round">
+        <path d="M150 80Q150 170 150 260"/><path d="M95 108Q120 190 148 260"/><path d="M205 108Q180 190 152 260"/>
+        <path d="M122 150Q135 200 149 260"/><path d="M178 150Q165 200 151 260"/><path d="M70 165Q110 210 147 260"/><path d="M230 165Q190 210 153 260"/>
+      </g>
+      <g fill="#5f6d60">
+        <use href="#leaf" transform="translate(148 175) rotate(-150) scale(1.1)"/><use href="#leaf" transform="translate(152 175) rotate(-30) scale(1.1)"/>
+        <use href="#leaf" transform="translate(140 130) rotate(-125) scale(.9)" fill="#74847a"/><use href="#leaf" transform="translate(160 130) rotate(-55) scale(.9)" fill="#74847a"/>
+        <use href="#leaf" transform="translate(110 195) rotate(-175) scale(.8)"/><use href="#leaf" transform="translate(190 195) rotate(-5) scale(.8)"/>
+      </g>
+      <g>
+        <use href="#bloom" transform="translate(70 168) scale(.85)" color="#efe6d0"/><use href="#bloom" transform="translate(230 168) scale(.85)" color="#f3ecd9"/>
+        <use href="#bloom" transform="translate(95 108) scale(1.3)" color="#eadfc4"/><use href="#bloom" transform="translate(205 108) scale(1.3)" color="#eee3c9"/>
+        <use href="#bloom" transform="translate(122 152) scale(1.1)" color="#f4f4f1"/><use href="#bloom" transform="translate(178 152) scale(1.1)" color="#f4f4f1"/>
+        <use href="#bloom" transform="translate(150 118) scale(1.2)" color="#e9dcbd"/><use href="#bloom" transform="translate(150 66) scale(1.5)" color="#f6f6f3"/>
+      </g>
+      <polygon points="58,185 150,172 242,185 170,336 130,336" fill="#e8e5db"/>
+      <polygon points="150,172 242,185 170,336 150,300" fill="#d3cfc2"/>
+      <path d="M58 185L150 300M242 185L150 300" stroke="#bdb9aa" stroke-width="1" fill="none"/>
+      <rect x="128" y="262" width="44" height="9" rx="4" fill="#fff"/>
+      <ellipse cx="124" cy="266" rx="20" ry="9" transform="rotate(-18 124 266)" fill="#fafafa"/><ellipse cx="176" cy="266" rx="20" ry="9" transform="rotate(18 176 266)" fill="#fafafa"/>
+      <circle cx="150" cy="266" r="6" fill="#e3e3df"/>
+      <path d="M146 270L132 310M154 270L168 310" stroke="#fafafa" stroke-width="5" stroke-linecap="round"/>
+    </svg>
+    <div class="tag"><strong id="giftCardTo"></strong><p id="giftMessage"></p></div>
+  </div>
+  <div class="nav"><button class="btn ghost" type="button" data-go="D">Kembali</button><button id="toClose" class="btn" type="button" data-go="F" hidden>Lanjut</button></div>
+</section>
+
+<!-- F: PENUTUP -->
+<section class="page" data-page="F" aria-labelledby="tF" hidden>
+  <h1 id="tF" class="sr-only">Penutup</h1>
+  <div class="card chat rise"><p id="closingMsg"></p></div>
+  <div class="nav col">
+    <button class="btn" type="button" data-go="B">Baca surat sekali lagi</button>
+    <button class="btn ghost" type="button" data-go="A" data-reset>Kembali ke awal</button>
+  </div>
+</section>
+</main>
+<script>/* ==========================================================
+   KONFIGURASI PROJECT DHINY — edit semua konten di file ini.
+   Simpan file, lalu refresh browser. Tidak perlu edit file lain.
+   ========================================================== */
+window.DHINY_CONFIG = {
+  recipient: "Dhiny",            // nama penerima
+  sender: "Aku",                 // nama pengirim
+  opening: "Ada sesuatu yang ingin aku sampaikan...", // teks pembuka (halaman amplop)
+
+  // Isi surat: satu item = satu paragraf
+  letter: [
+    "Dhiny, aku mau minta maaf ya.",
+    "Aku sadar, waktu aku sibuk mengerjakan tugas dan jadi slow response, aku sudah bikin kamu menunggu. Aku mungkin menganggap aku cuma sedang menyelesaikan tugas, tapi aku kurang memikirkan bagaimana rasanya buat kamu. Sampai akhirnya kamu merasa seolah-olah harus mengemis waktu dari aku.",
+    "Aku minta maaf karena sudah membuat kamu merasa seperti itu. Kamu nggak seharusnya merasa harus meminta-minta waktuku supaya bisa mendapat perhatian dariku.",
+    "Aku nggak mau menjadikan kesibukan sebagai alasan untuk membenarkan sikapku. Aku salah karena kurang memberi kabar dan kurang membuat kamu merasa dihargai.",
+    "Aku mau memperbaiki ini, bukan cuma lewat kata-kata, tapi juga lewat sikapku ke depannya. Aku akan berusaha memberi kabar dengan lebih baik saat sedang sibuk, supaya kamu nggak harus menebak-nebak atau merasa diabaikan.",
+    "Maaf ya, Dhiny. Aku sadar kata maaf saja nggak langsung memperbaiki semuanya, tapi aku benar-benar mau belajar dari kesalahan ini."
+  ],
+
+  photo: {
+    src: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/6xaJSlACEQAAAAEAABZ/anVtYgAAAB5qdW1kYzJwYQARABCAAACqADibcQNjMnBhAAAAFllqdW1iAAAAR2p1bWRjMm1hABEAEIAAAKoAOJtxA3VybjpjMnBhOmJmNmIwNmE1LTUxNWYtNDFkNS04NDMzLTk0YjU5NGMxNGY1NwAAAAOUanVtYgAAAClqdW1kYzJhcwARABCAAACqADibcQNjMnBhLmFzc2VydGlvbnMAAAAAuWp1bWIAAABEanVtZGNib3IAEQAQgAAAqgA4m3ETYzJwYS5pbmdyZWRpZW50LnYzAAAAABhjMnNobrRgOoWvIUhGN8RSrE++uQAAAG1jYm9yo2lkYzpmb3JtYXRqaW1hZ2UvanBlZ2ppbnN0YW5jZUlEeCx4bXA6aWlkOjA3NDkwYWQ5LWYwMmUtNGUwZC1iMDExLWQ5ZTQzNzBlMzdhNGxyZWxhdGlvbnNoaXBocGFyZW50T2YAAAHianVtYgAAAEFqdW1kY2JvcgARABCAAACqADibcRNjMnBhLmFjdGlvbnMudjIAAAAAGGMyc2iRHG7lxo9aNgwkUwC885wAAAABmWNib3KiZ2FjdGlvbnOComZhY3Rpb25rYzJwYS5vcGVuZWRqcGFyYW1ldGVyc6FraW5ncmVkaWVudHOBomN1cmx4LXNlbGYjanVtYmY9YzJwYS5hc3NlcnRpb25zL2MycGEuaW5ncmVkaWVudC52M2RoYXNoWCBnZhPwzaGA44OJoROQttvk4mTRa94wVJ8axCy5iceaJ6RmYWN0aW9ueB1jb20uYW50aHJvcGljLmNsYXVkZS5wcm92aWRlZGpwYXJhbWV0ZXJzoXgfY29tLmFudGhyb3BpYy5vcmlnaW4tY29uZmlkZW5jZWd1bmtub3dua2Rlc2NyaXB0aW9ueGZDbGF1ZGUgcHJvdmlkZWQgdGhpcyBmaWxlIGF0IHRoZSByZXF1ZXN0IG9mIGEgdXNlciBhbmQgbWF5IGhhdmUgY3JlYXRlZCBvciBtb2RpZmllZCB0aGUgZmlsZSBjb250ZW50cy5tc29mdHdhcmVBZ2VudKFkbmFtZWZDbGF1ZGVyYWxsQWN0aW9uc0luY2x1ZGVk9QAAAMhqdW1iAAAAQGp1bWRjYm9yABEAEIAAAKoAOJtxE2MycGEuaGFzaC5kYXRhAAAAABhjMnNohpnuT4D+Mxt5oj5ZIJZSSAAAAIBjYm9ypWNhbGdmc2hhMjU2Y3BhZE4AAAAAAAAAAAAAAAAAAGRoYXNoWCDKlwcQjq6PRbzAzRjHkZuY+EPp+2UHl/hvgrfXaK1k62RuYW1lbmp1bWJmIG1hbmlmZXN0amV4Y2x1c2lvbnOBomVzdGFydBRmbGVuZ3RoGRaLAAACPmp1bWIAAAAnanVtZGMyY2wAEQAQgAAAqgA4m3EDYzJwYS5jbGFpbS52MgAAAAIPY2JvcqVjYWxnZnNoYTI1NmlzaWduYXR1cmV4TXNlbGYjanVtYmY9L2MycGEvdXJuOmMycGE6YmY2YjA2YTUtNTE1Zi00MWQ1LTg0MzMtOTRiNTk0YzE0ZjU3L2MycGEuc2lnbmF0dXJlamluc3RhbmNlSUR4LHhtcDppaWQ6YjRkODQ4NWEtYzk1OC00OTVhLWJhMDUtOGM2YWI0ZTlkM2Y5cmNyZWF0ZWRfYXNzZXJ0aW9uc4OiY3VybHgtc2VsZiNqdW1iZj1jMnBhLmFzc2VydGlvbnMvYzJwYS5pbmdyZWRpZW50LnYzZGhhc2hYIGdmE/DNoYDjg4mhE5C22+TiZNFr3jBUnxrELLmJx5onomN1cmx4KnNlbGYjanVtYmY9YzJwYS5hc3NlcnRpb25zL2MycGEuYWN0aW9ucy52MmRoYXNoWCDwIrGsYFeex8GmrCH5MFqQhIP1T/GULo3exYHIOxm2jqJjdXJseClzZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmhhc2guZGF0YWRoYXNoWCCcxKgZSwVbvsXDwYpeJ6OWqEg6F8MFf2rr04ZSVupfLXRjbGFpbV9nZW5lcmF0b3JfaW5mb6NkbmFtZW9BbnRocm9waWMgRmlsZXNndmVyc2lvbmUxLjAuMGtzcGVjVmVyc2lvbmUyLjQuMAAAEDhqdW1iAAAAKGp1bWRjMmNzABEAEIAAAKoAOJtxA2MycGEuc2lnbmF0dXJlAAAAEAhjYm9y0oRZAhKiASYYIVkCCjCCAgYwggGNoAMCAQICFEDloAruwjnQvriD+gZCBT1nVRMAMAoGCCqGSM49BAMDMEkxFzAVBgNVBAoTDkFudGhyb3BpYywgUEJDMS4wLAYDVQQDEyVBbnRocm9waWMgQ29udGVudCBDcmVkZW50aWFscyBSb290IENBMB4XDTI2MDgwNzE4NDM1NloXDTI4MDgwNjE5NDM1NlowRDEXMBUGA1UEChMOQW50aHJvcGljLCBQQkMxKTAnBgNVBAMTIEFudGhyb3BpYyBDbGF1ZGUgQ29udGVudCBTaWduaW5nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEmHoKa8tQGAUU1TS9QqU5W0Tp2N3XsvlK7BfQt6YWKwEzd2R3/dzKPEUDdCjlLjp9fT+KFjRVnuZ9v0oXvTe3k6NYMFYwDgYDVR0PAQH/BAQDAgeAMBUGA1UdJQQOMAwGCisGAQQBg+heAgEwDAYDVR0TAQH/BAIwADAfBgNVHSMEGDAWgBTOUeIEgU5kWyP448TPmj6cwddcwjAKBggqhkjOPQQDAwNnADBkAjAxcx0UngF60stVjs5G4T2eiptsBk5mf9oCtfJPAUBl8qs/PEXa8+gk1/X5QJ2DVcYCMHBfXN31YapiSqYvlIWrDVDJKOvXMl+kkz37Wt0PBI8sw486Mq6JeOhT+lRR4b1HCaFjcGFkWQ2eAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA9lhAmdgh/7ygEYMt+T9LkQrWemIKGuhrf2At5xP3l8wd0muXM/+vyyqfhccfwQ0EG5/VwVSYVDbuYjucLArrpXEVqv/bAEMABgQFBgUEBgYFBgcHBggKEAoKCQkKFA4PDBAXFBgYFxQWFhodJR8aGyMcFhYgLCAjJicpKikZHy0wLSgwJSgpKP/bAEMBBwcHCggKEwoKEygaFhooKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKP/AABEIA+gDIAMBIgACEQEDEQH/xAAfAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgv/xAC1EAACAQMDAgQDBQUEBAAAAX0BAgMABBEFEiExQQYTUWEHInEUMoGRoQgjQrHBFVLR8CQzYnKCCQoWFxgZGiUmJygpKjQ1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4eLj5OXm5+jp6vHy8/T19vf4+fr/xAAfAQADAQEBAQEBAQEBAAAAAAAAAQIDBAUGBwgJCgv/xAC1EQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4+Tl5ufo6ery8/T19vf4+fr/2gAMAwEAAhEDEQA/APmeiiimAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRilxQAlGKWlxQAmKMUuKKAEop1FACUYpcUYoATFFLijFADaKdRQA3FGKWjFADcUU7FJQAlFLikxQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRiloAMUUuKWgBMUYpcUtACUYpaXFACYopaKAEoxTsUYoAbijFOxRigBMUmKdijFADcUU7FGKAG0YpaKAG4op2KTFADaMU6kxQA2jFOpMUANopaMUAJRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUYoAKWiloAMUtGKWgBMUtLiigAxRS4paAExRilxS4oASiloxQAmKMU7FGKAG4oxTsUYoAbijFOxRigBuKMU7FGKAG0UuKKAG4oxTsUmKAG0Yp1JigBtJinUYoAbSYp1JigBtJTqKAG0UuKSgAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKWgAxS0YpaAClopaAExS0uKWgBMUtGKWgBMUtLiigAxRS4ooAKMUtGKAExRinYooAbRTqKAG0U6igBuKMU6jFADcUUuKMUANoxTqTFADaMU6kxQA2kxTqMUAMoxTqTFADaSnUlADcUlOxSYoAbRS0lABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFLQAUtApQKAAUtAp1ACUtLS4oATFLRiloAMUtGKWgBMUtLRQAmKWlxRQAmKXFLijFACUUtLQA2inYoxQAlJTsUYoAbRTqKAG4pMU7FGKAG0YpaMUANpKdiigBtJinUlADaTFOoxQAykp9JQAykIp9IaAGUlPNNNADaKWkoAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKUUAApRQKUUAApwpBThQAUtFLQAUuKKXFABilopaADFFLiloASlxRS4oATFLS0UAJilxS4ooASinUYoAbijFOxRigBuKMU7FGKAG0U7FFADaTFOoxQA2kp2KKAG4pKdiigBmKKdikoAbSYp1JigBtJTqSgBtIadSGgBppDTjSGgBhpDTjSGgBtFKaSgAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAAU4UgpwoABSigUtAC0tFLQAUtFLQAUuKWlFACUtLS0AJiloxS0AFGKWlxQAlLiloxQAmKWlxRQAmKMUuKXFADcUYp2KMUANxRinYoxQA3FGKdikxQAlJinUUANxSU7FFADcUlOxSUANxSU7FFADKTFPpKAGYpKeRSUAMpKfTaAGmkNOpDQA00008000ANNIacaQ0ANooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKUUgpwoABThSCnCgAFOpBThQAUooFKKACnCkFOFAABSigUtABS0UtABiloxS0AFGKWlxQAlLiilxQAlLS0YoATFGKXFLigBuKKdRQA2jFOooAbijFOxSYoASkp2KKAG4pKdikoAbiinYpKAG4pKdikxQA2kp1JQA00hpxpDQA00lONIaAGUlONIaAGmmmnmmmgBppDTjSGgBhpKcaQ0AJRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFKKAAU4UgpwoABThSCnCgAFOFIKcKAAUooFKKAFFKKBS0AApaKWgApaWloATFLS4paAEpcUtGKACjFLS4oASjFLS4oATFFLiloAbRTqMUANop2KKAG0Yp1JigBMUlOxSUANxRTsUlADcUlOxRQAzFJin0mKAG02n0lADDSGnUhoAaaQ040hoAYaQ040hoAaaaaeaaaAGmkNONNNADTSGnGmmgBtFKaSgAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKcKQUooAUU4UgpRQAopwpBThQACnCkFKKAFFKKBSigBaWiloAKdSU4UAFLQKUCgAxS0CloAKXFFLigBKXFLS4oASjFLS4oASilpaAG4oxTsUYoAbijFOxRigBtFOpKAG4op2KSgBuKKdSUANxSU7FJQA2kxTqQ0ANpKcaQ0ANptPpKAGGkNOpKAGmmmnmmmgBpptPNNNADTTTTzTTQA00008000ANNNpxpDQAlFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFKKAFFKKQU4UAKKUUgpwoAUUooFKKAFFKKBSigBRSigUooAUUooFKKAAU4UgpwoABSigUtABS0U6gBKXFLS4oASlpaKACjFLilxQAlGKWlxQA3FGKdijFADcUYp2KMUANxRTsUlADcUYp1JigBtJTqKAGYop2KSgBtNNPpDQAw0hpxpDQA00hpxpDQAw0hpxpDQAw0hpxpDQA00008000ANNNNONIaAGGkNONIaAGGkNONNNADaKU0lABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFKKQU4UAKKcKQUooAUU4UgpwoABThSCnCgBRSikFOFACilFApRQAopRQKUUAKKUUgp1AAKWgU6gApaKWgApcUUuKAClopaAExS0uKKACjFLijFACYoxTqKAG4oxTqKAG4oxS4oxQA2jFOpMUANpKdSUANxSU7FJQA2kp1JQA0000+mmgBppDTqQ0AMNIacaQ0AMNIacaQ0AMNIacaQ0AMNIacaaaAGmmmnmmmgBppppxpDQAw0lONNNABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAKKUUgpwoAUU4UgpRQA4UopBThQAopwpBSigBRThSCnCgAFOFIKcKAAU4UgpwoABThSCnCgAFOFIKcKAAUooFKKAAClFKKWgBKWlpaAExS0uKKAExS4pcUUAJRTqKAG0U6igBuKMUtGKAG0mKdRigBlFOpKAGmkNONIaAGGkNONIaAGmmmnmmmgBppDTjSGgBhpDTjSGgBhpDTjTTQA00008000ANNNNONIaAGGkNONNNADTTTTzTTQA000040hoAbRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUCilFACinCminCgBRThSCnCgBRSikFOFACinCkFOFACilFIKcKAFFOFIKUUAKKcKQUooAUU4UgpwoABThSCnUAApRQKUUALS0UtABS0UtABiloxS0AJilpcUUAJRinYoxQA3FFOxRigBtJinUYoAbSYp1JigBtJTqSgBppDTqQ0ANNNNPNNNADTTTTzTTQA00008000ANNNNPNNNADTTTTjSGgBhpDTjSGgBhppp5ppoAaaaacaQ0AMNIacaaaAGmmmnGkNADDRSmkoAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKUUlOFACinCminCgBRThSCnCgBRThTRThQAopwpBThQAopwpopwoAUU4UgpwoAUUopBThQAopRQKUUAKKcKQUooAUUooFKKAFFKKBSigAp1IKcBQAmKWlpaAExS0uKKAExRinYoxQA3FGKdijFADaTFOoxQA2kxTqQigBtJTjSGgBlJTjSGgBtNNPNNNADTTTTzTTQA000040hoAYaQ040hoAYaQ04000ANNNNONIaAGGkNONNNADTTTTjSGgBhpDTjTTQA00004000ANNJTjTaACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACnCminCgBwpwpopwoAUU4UgpwoAUU4U0U4UAKKcKQU4UAKKcKaKcKAFFOFIKcKAFFOFIKUUAKKcKQU4UAKKUUgpwoAUUooFKKAFFKKBSigBRSigUtABS0UtABiloxS0AJijFOxRQA3FGKdRigBuKSnYpKAG0hp1IaAGmkNONIaAGGkNONIaAGmmmnGkNADDSGnGkNADDSGnGmmgBppppxpDQAw0hpxppoAaaaacaQ0AMNIacaaaAGmmmnGmmgBpppp5ppoAaaaacaaaAGmmmnGkNACUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAopRSCnCgBRThSClFADhThTRThQA4UopBThQAopwpBSigBwpwpopwoAUU4UgpwoAUU4U0U4UAOFKKQU4UAKKcKQUooAUU4UgpwoABThSCnCgBRS0gpwoAKdSCnUAGKMUuKXFACYopaWgBtFOpKAG4op2KSgBtNp9IaAGGkNONIaAGGkNONIaAGGkNONNNADTTTTjSGgBhpDTjTTQA000040hoAYaQ04000ANNNNONNNADTTTTzTTQA00004000ANNNNONIaAGGkNONNNADTTTTjTTQAlFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAKKcKaKcKAHCnCminCgBwpRSCnCgBRThSClFADhThTRThQAopwpBThQAopwpopwoAcKcKaKcKAFFOFIKcKAFFOFNFOFADhSikFOFACinCkFKKAFFOFIKcKAAU4UgpwoABS0CloAKKWlxQA2inYpKAG4pDTqQ0ANNIacaaaAGmmmnmmmgBppppxpDQAw0hpxppoAaaaaeaaaAGGkNONNNADTTTTjTTQA00008000ANNNNONNNADTTTTjTTQA00hpTSGgBppppxppoAaaaacaaaAGmmmnGkNADaKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAcKUUgpRQA4U4U0U4UAOFOFNFOFADhSikFOFACinCkFKKAHCnCminCgBwpwpopwoAUU4UgpwoAUU4U0U4UAOFOFNFOFACinCkFOFACinCminCgBwpRSCnCgBRThSClFACiloFOFABRilpcUANxRTsUlADTTTTzTTQA000040hoAYaQ04000ANNNNPNNNADTTTTjTTQA00004000ANNNNONNNACGmmnGmmgBppppxppoAaaaacaaaAGmkNONNNADTTTTjTTQA00004000ANNIaU0hoAYaQ04000ANooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigBwpRSClFADhThTRThQA4U4U0U4UAOFOFNFOFADhSikFKKAHCnCminCgBwpwpopwoAcKcKaKcKAFFOFNFOFADhThTRThQA4U4U0U4UAOFOFNFOFACinCminCgBwpwpopwoAcKUUgpwoAUUuKBSigBMUhpxpDQAw0hpxppoAaaaacaaaAGmkNONNNADTTTTjTTQA00004000ANNNNONNNACGmmnGmmgBppppxppoAaaaacaaaAGmkNKaQ0ANNNNONNNADTTTTjTTQA00004000ANNIaU0hoAaaaacaaaAG0UGigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAHClFIKUUAPFKKaKcKAHCnCminCgBwpwpopwoAcKUUgpRQA4U4U0U4UAOFOFNFOFADhThTRThQAop4pgpwoAcKcKaKcKAHCnCminCgBwpwpopwoAUU4U0U4UAOFOFNFOFADhThTRSigB4pRTRS5oAcaaaM0hoAQ0004000ANNNNONNNACGmmnGmmgBppppxppoAaaaacaaaAGmmmnGmmgBDTTTjTTQA00004000ANNNNONNNADTSGlNIaAGmmmnGmmgBppppxppoAaaaacaaaAGmkNKaQ0ANNNNONNNADTRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFADhSikFKKAHCnCminCgBwpwpopwoAcKcKaKUUAPFKKaKcKAHCnCminCgBwpwpopwoAcKcKYKcKAHCnCminCgBwpwpopwoAcKcKYKcKAHCnCminCgBwpwpopRQA8UopopwoAcKcKYKdQA6lzTaM0AOzSUmaKAA000pppoADTTSmmmgBDTTTjTTQAhpppTTTQAhpppxppoAaaaacaaaAENNNKaaaAENNNONNNADTTTTjTTQA00004000AIaaaU0hoAaaaacaaaAGmmmnGmmgBppDSmkNADTTTSmkNADaKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAUU4U0U4UAOFOFNFOFADhThTRSigB4pRTRThQA4U4U0U4UAOFOFNFKKAHCnCminCgBwpwpopwoAcKcKYKcKAHCnCminCgBwpwpopRQA8UopopwoAcKcKYKcKAHCnCmCnCgBwpRTRS5oAdS5ptGaAHZpKTNFACmmmjNIaAA0hoNIaAENNNKaQ0AIaaaU000AIaaacaaaAENNNKaaaAENNNONNNADTTTTjTTQAhpppTTTQAhpppxppoAaaaacaaaAENNNKaQ0ANNNNONNNADTTTTjTTQA00hpTTTQAlFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAKKcKaKUUAPFKKaKcKAHCnCminCgBwpwpopwoAcKcKYKcKAHCnCminCgBwpwpgpwoAcKcKaKcKAHCnCmilFADxSiminCgBwpwpgpwoAcKcKaKUUAPFKKaKWgBwp1Mp1ADqXNNpc0AOoptLQAuaKSkoAXNJRmkoAKQ0UhoAQ0hoNIaAENIaDSGgBDTTSmkNADTSGlNNNACGmmlNIaAENNNKaaaAENNNONNNADTTTTjTTQAhpppTTTQAhpppxppoAaaQ0pppoAQ000ppDQA00004000AJRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFAAKcKaKcKAHCnCminCgBwpwpgpwoAcKcKaKcKAHCnCmCnCgBwpwpopwoAcKcKaKUUAPFKKaKcKAHCnCmCnCgBwpwpopRQA8UopopRQA8UopopRQA8UopopRQA6lpopaAHUuabS5oAdRTc0UAOoptGaAFzRSZpKAFppopDQAGkNBpDQAhpDSmmmgBDSGlNNNACGkNKaaaAENNNKaQ0ANNIaU000AIaaaU0hoAQ000pppoAQ0004000ANNNNONNNACGmmlNNNACGmmnGmmgBppDSmmmgAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigApwptKKAHCnCminCgBwpwpgpwoAcKcKaKcKAHCnCmilFADxSiminCgBwpwpgpwoAcKcKaKUUAPFKKaKcKAHClFNFOFADhSiminUAOFKKbS0APFKKbS0AOzS03NLQA6jNNzS0AOzRmm5ozQA7NGabmjNAC5opM0lAC0hNFJmgANIaKSgBDSGikoADTTS000ABpppTTTQAGmmlNNNACGkNKaaaAENNNKaQ0ANNIaU000AIaaaU0hoAaaQ0pppoAQ000ppDQA00004000AIabSmkoAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKUUlAoAcKcKaKcKAHCnCmCnCgB4pRTRThQA4U4UwU4UAOFOFNFKKAHilFNFOFADhThTBThQA4U4UwU4UAOFOpgpwoAcKcKYKcKAHUtNFLQA6lptLQA7NLTc0tADs0U3NLQA7NGabmlzQAuaM0maTNADqTNJRmgApM0UmaAFptFJQAGkNBpDQAGmmlNNNAAaaaU0hoAQ000ppDQAhpppTTTQAGmmlNNNACGkNKaaaAENNNKaQ0ANNIaU000AIaaaU0hoAaaQ0pppoAQ0lBooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAFFOFNFOFADhThTBThQA4U4U0UooAeKUU0U4UAOFOFMFOFADhThTBThQA4U4U0UooAeKUU0UooAcKcKYKcKAHClFNFLQA8UopopQaAHUtNpaAHZopuaWgB2aWm5ooAdRmm0uaAFzRSZpKAHUmaSjNAC0maSkzQAtJRSUABpDQTSGgANNNLTTQAGkNFIaAENIaDSGgBDSGg0hoAQ000ppDQAhpppTTTQAGmmlNNNACGkNKaaaAENNNKaQ0ANNIaU000AJRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAApwptKKAHilFNFOFADhThTBThQA4U4U0UooAeKUU0UooAeKUU0UooAeKUU0UooAfS00UooAcKdTBTqAHUtNpaAHUuabS5oAdS02loAdmlpuaKAHZpc03NGaAHUU2igB1FNooAdmkzSZozQAtJmkozQAUmaKTNABmkopKACkopDQAGkNBppoADSGg0hoAQ0hoNIaAENIaDSGgBDSGg0hoAQ000ppDQAhpppTTTQAGmmlNNNACGkNKabQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABSikooAcKcKaKUUAPFKKaKUUAPFKKaKcKAHClFNFOFADhSimilFADxSimilFADxSimilFADhSimilFAD6WmCnUAOpc02lzQA6lplLQA7NLTc0UAOzS5ptGaAHZozTc0uaAFozSZpM0AOzSZpM0UALSZpKM0ALSZpKTNAC0lFJQAUhopDQAGmmlNNNAAaQ0GkNACGkNBpDQAGmmlNNNAAaaaU000ABpppTTTQAhpDSmmmgBDTTSmkNACGkoooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAUUoptOFADhThTBThQA4U4UwU4UAOFOFMFOFADhSimilFAD6WmiloAfSimU6gB1KKbS0AOBpabmloAdS5ptLmgB1LTaKAHZpc03NLmgBaXNNozQA7NGaTNGaAFzRmkzRmgBc0lJmigBaTNGaTNAC0maSjNABSUUlABSGjNJQAGkopKACkopDQAlJQaQ0ABpppTTTQAGmmlNNoADTTSmmmgANNNKaaaAA000pppoAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAClFJRQA4U4UwU4UAOFOFMFOFADhThTBThQA4UopopRQA8UopopRQA6lpopaAH0tMp1ADs0uabmjNAD6XNMpc0AOpc02lzQA6jNNpc0ALS03NFADs0ZpKM0ALmjNJmigBaKbRQAuaKTNJQAtJmjNJQAtJSUlAC5pKM0lABSUUhoADTTQaQ0ABpDQaQ0ABpppTTTQAGmmlNNNAAaQ0GkNACGkNBpDQAhpKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAUUoptKKAHCnCmilFADhThTBTqAHClFNpaAHilFNpaAHClFNFKDQA6lptLQA6lzTaXNADqXNNozQA+jNNpc0AOozTaXNADs0U3NGaAHUU2loAWikpKAHUZptGaAFzRSZpKAFzRSZpKAFzSUmaKADNJRmkoAKSikoADSGg0hoADSGikoAKbRSUAFNNKaaaAA0hoNIaAENIaKSgAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAcKUU0UooAcKcKYKcKAHClpopaAHU6mUtAD6UGmUuaAH0tMzS0APpc0ylzQA6lzTaXNADqM02lzQA6im0tADs0ZpuaM0AOzRSZozQAtFJmjNAC5ozTc0ZoAXNFJSUALmikzSUALmkozSUALmkpM0lAC0maKTNAAaSikoAKbRSGgANIaDSGgANNNKaaaAA0hoNIaAENFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUopKKAHClFNpRQA8UopopRQA6lpopaAHUtNpaAHZpabmloAdS5ptGaAH0ZptLmgB1GabS5oAdmim5paAHZozTaM0AOzRmkzRmgBc0ZpM0ZoAXNGabmigBaM0lGaAFzSUmaKADNFJmkoAXNJRmkoAKTNFJmgApKKSgANIaKQ0ABpDQaQ0ABppoNJQAGkoooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKWkooAdThTKWgB4NLTAaWgB9LTKWgB+aWmZpaAHUuabS5oAdRmm0uaAHUtNzRQA7NFJmjNADqKbS0ALmjNJmjNAC5ozSZozQAuaKSkoAWjNJmjNAC5pKSigBc0lJmigAzSUZpKAFpM0lJmgBaSikoAKQ0ZpDQAGkpKSgApKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKWkooAdS5ptLmgB1LTaWgB2aWm5ooAfRTc0tADqWm5ooAdmlpuaKAHZozSZozQA6im5ooAdRSUUALRSUUALRTaM0ALmjNJmjNAC0maSjNAC5pKSigAzRSZpKAFpM0UmaACkopKADNJRmkoAKSiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKXNJRQA6im0tADs0tNzS0AOzS0zNLQA7NLTc0UAOzS03NGaAHUuabRmgB2aM03NGaAHUUmaM0ALRSZozQAuaM0maTNADs0lJmigBaTNJRmgBaTNJRmgBaSkozQAUmaKTNAC0lJSUALmkoooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAFzRSUUAOzS03NFADs0tNzRQA7NLmm5ozQA6lptFADs0ZpuaXNAC5ozSZozQAuaM0maM0ALmjNJmkzQA6kpKKAFzRmm5ozQAtJmikzQAtJmkozQAUZpKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAXNFJRQA6jNNpc0ALmlpuaKAHUZptLQAuaM0maM0ALmjNJmjNAC5opKSgB1JmkozQAuaKTNJQAtGaSigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACjNFFABmiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA//9k=",   // ganti file ini atau path-nya
+    alt: "Foto utama untuk Dhiny",
+    caption: "Ada hal-hal sederhana yang tetap berarti buat aku.",
+    fallbackText: "Foto akan muncul di sini"
+  },
+
+  game: {
+    title: "Satu hal kecil",
+    intro: "Ketuk kartunya satu per satu, pelan-pelan saja.",
+    messages: [
+      "Aku sadar, perhatian kecil juga berarti.",
+      "Aku mau belajar memberi kabar dengan lebih baik.",
+      "Aku ingin menunjukkan perubahan lewat tindakan."
+    ]
+  },
+
+  gift: {
+    cardTo: "Untuk Dhiny",
+    message: "Bunga ini mungkin sederhana, tapi aku ingin kamu tahu kalau aku nggak menganggap perasaanmu sebagai hal kecil."
+  },
+
+  closing: {
+    message: "Maaf ya, Dhiny. Aku nggak mau kamu merasa harus mengemis waktuku. Aku masih belajar, tapi aku mau memperbaiki caraku memperlakukan kamu. Aku ingin kamu bisa merasakan itu dari sikapku juga. ❤️"
+  },
+
+  music: {
+    enabled: true,                          // false = sembunyikan tombol musik
+    src: "assets/audio/musik-latar.mp3",    // taruh file musikmu di sini
+    volume: 0.4                             // 0 sampai 1
+  },
+
+  // Warna tema (dipakai sebagai CSS variable)
+  theme: { bg: "#0B0B0D", panel: "#171719", text: "#F5F5F3", muted: "#B7B7BA", border: "#38383C" }
+};
+</script>
+<script>(function () {
+  'use strict';
+  var C = window.DHINY_CONFIG || {};
+  var $ = function (s) { return document.querySelector(s); };
+  var $$ = function (s) { return Array.prototype.slice.call(document.querySelectorAll(s)); };
+  var get = function (path) { return path.split('.').reduce(function (o, k) { return o == null ? o : o[k]; }, C); };
+
+  // Tema & teks dari config
+  Object.keys(C.theme || {}).forEach(function (k) { document.documentElement.style.setProperty('--' + k, C.theme[k]); });
+  $$('[data-cfg]').forEach(function (el) { var v = get(el.dataset.cfg); if (typeof v === 'string') el.textContent = v; });
+  if (C.recipient) document.title = 'Untuk ' + C.recipient;
+
+  var letter = $('#letterBody');
+  (C.letter || []).forEach(function (t) { var p = document.createElement('p'); p.textContent = t; letter.appendChild(p); });
+  $('#giftCardTo').textContent = (C.gift && C.gift.cardTo) || '';
+  $('#giftMessage').textContent = (C.gift && C.gift.message) || '';
+  $('#closingMsg').textContent = (C.closing && C.closing.message) || '';
+
+  function show(id) {
+    $$('.page').forEach(function (p) { p.hidden = p.dataset.page !== id; });
+    window.scrollTo(0, 0);
+    var h = $('.page:not([hidden]) h1');
+    if (h) { h.setAttribute('tabindex', '-1'); h.focus({ preventScroll: true }); }
+  }
+
+  // A: amplop
+  var env = $('#envelope'), readBtn = $('#readBtn'), envHint = $('#envHint');
+  env.addEventListener('click', function () {
+    if (env.classList.contains('open')) return;
+    env.classList.add('open'); env.setAttribute('aria-expanded', 'true');
+    env.setAttribute('aria-label', 'Amplop sudah terbuka');
+    envHint.textContent = 'Suratnya sudah terbuka';
+    setTimeout(function () { readBtn.hidden = false; readBtn.focus(); }, 1000);
+  });
+
+  // C: foto (dengan fallback)
+  var img = $('#photo'), fb = $('#photoFallback'), P = C.photo || {};
+  $('#photoCaption').textContent = P.caption || '';
+  $('#photoFallbackText').textContent = P.fallbackText || '';
+  img.alt = P.alt || '';
+  img.addEventListener('load', function () { img.hidden = false; fb.hidden = true; requestAnimationFrame(function () { img.classList.add('loaded'); }); });
+  img.addEventListener('error', function () { img.hidden = true; fb.hidden = false; });
+  if (P.src) img.src = P.src;
+
+  // D: mini game
+  var cardsEl = $('#cards'), opened = 0, msgs = (C.game && C.game.messages) || [];
+  var status = $('#gameStatus'), surprise = $('#surpriseBtn');
+  function buildCards() {
+    cardsEl.textContent = ''; opened = 0; surprise.hidden = true;
+    status.textContent = '0 dari ' + msgs.length + ' kartu terbuka';
+    msgs.forEach(function (m, i) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'flip'; b.setAttribute('aria-label', 'Kartu ' + (i + 1) + ', tertutup. Ketuk untuk membuka');
+      var f = document.createElement('span'); f.className = 'front'; f.textContent = 'Kartu ' + (i + 1) + ' · ketuk untuk membuka';
+      var k = document.createElement('span'); k.className = 'back'; k.textContent = m;
+      b.appendChild(f); b.appendChild(k);
+      b.addEventListener('click', function () {
+        if (b.classList.contains('open')) return;
+        b.classList.add('open'); b.setAttribute('aria-label', 'Kartu ' + (i + 1) + ': ' + m);
+        opened++;
+        status.textContent = opened < msgs.length ? opened + ' dari ' + msgs.length + ' kartu terbuka' : 'Semua kartu sudah terbuka';
+        if (opened === msgs.length) surprise.hidden = false;
+      });
+      cardsEl.appendChild(b);
+    });
+  }
+  buildCards();
+
+  // E: hadiah
+  var gift = $('#giftBox'), bq = $('#bouquet'), gStage = $('#giftStage'), toClose = $('#toClose');
+  gift.addEventListener('click', function () {
+    if (gift.classList.contains('open')) return;
+    gift.classList.add('open');
+    setTimeout(function () {
+      gStage.hidden = true; bq.hidden = false; toClose.hidden = false;
+      bq.setAttribute('tabindex', '-1'); bq.focus({ preventScroll: true });
+    }, 1300);
+  });
+
+  function resetAll() {
+    env.classList.remove('open'); env.setAttribute('aria-expanded', 'false');
+    env.setAttribute('aria-label', 'Amplop surat. Ketuk untuk membuka');
+    envHint.textContent = 'Ketuk amplop untuk membuka'; readBtn.hidden = true;
+    gift.classList.remove('open'); gStage.hidden = false; bq.hidden = true; toClose.hidden = true;
+    buildCards();
+  }
+
+  $$('[data-go]').forEach(function (b) {
+    b.addEventListener('click', function () { if (b.hasAttribute('data-reset')) resetAll(); show(b.dataset.go); });
+  });
+
+  // Musik (opsional, mati secara default)
+  var M = C.music || {}, mBtn = $('#musicBtn'), mLabel = $('#musicLabel'), mStatus = $('#musicStatus');
+  var audio = null, playing = false;
+  function mUI() {
+    mBtn.setAttribute('aria-pressed', String(playing));
+    mBtn.setAttribute('aria-label', playing ? 'Matikan musik latar' : 'Putar musik latar');
+    mLabel.textContent = playing ? 'Musik menyala' : 'Musik mati';
+  }
+  function mFail() { playing = false; mUI(); mStatus.textContent = 'Musiknya belum bisa diputar. Cek file ' + (M.src || 'musik') + ' ya.'; }
+  if (M.enabled === false) { $('#musicWrap').hidden = true; }
+  mBtn.addEventListener('click', function () {
+    mStatus.textContent = '';
+    if (playing && audio) { audio.pause(); playing = false; mUI(); return; }
+    if (!audio) {
+      audio = new Audio(); audio.loop = true; audio.volume = typeof M.volume === 'number' ? M.volume : 0.4;
+      audio.addEventListener('error', mFail); audio.src = M.src || '';
+    }
+    var p = audio.play();
+    if (p && p.then) p.then(function () { playing = true; mUI(); }).catch(mFail);
+    else { playing = true; mUI(); }
+  });
+  mUI();
+})();
+</script>
+</body>
+</html>
